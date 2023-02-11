@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
+﻿using System.Collections;
 using UnityEngine;
 using VTNetworking;
 using VTOLVR.Multiplayer;
@@ -18,7 +15,7 @@ public class FlechetteAirburstRocket : Rocket
     {
         if (!flechetteGun.actor)
         {
-            flechetteGun.actor = this.sourceActor;
+            flechetteGun.actor = sourceActor;
         }
     }
 
@@ -27,7 +24,7 @@ public class FlechetteAirburstRocket : Rocket
         base.Fire(sourceActor);
         if (VTOLMPUtils.IsMultiplayer())
         {
-            VTNetEntity component = base.GetComponent<VTNetEntity>();
+            VTNetEntity component = GetComponent<VTNetEntity>();
             if (component && !component.isMine)
             {
                 return;
@@ -39,7 +36,7 @@ public class FlechetteAirburstRocket : Rocket
 
     private IEnumerator FiredRoutine()
     {
-        this.flechetteGun.actor = this.sourceActor;
+        flechetteGun.actor = sourceActor;
 
         while (!Physics.Raycast(rayTf.position, rayTf.forward, out var raycastHit, distance))
         {
@@ -50,19 +47,19 @@ public class FlechetteAirburstRocket : Rocket
         {
             var ps = particleSystems[i];
             ps.gameObject.transform.SetParent(null);
-            ps.transform.position = this.transform.position;
-            ps.transform.rotation = this.transform.rotation;
+            ps.transform.position = transform.position;
+            ps.transform.rotation = transform.rotation;
             ps.Emit((int)ps.emission.GetBurst(0).count.constant);
         }
 
         yield return new WaitForSeconds(delay);
         
-        this.flechetteGun.SetFire(true);
+        flechetteGun.SetFire(true);
         while (flechetteGun.currentAmmo > 0)
         {
             yield return null;
         }
 
-        this.Detonate();
+        Detonate();
     }
 }
